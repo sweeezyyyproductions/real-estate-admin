@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Card, Row, Col, Button, Form, Input, Slider, Modal, Space, notification, Upload } from 'antd';
+import { Card, Row, Col, Button, Form, Input, Slider, Modal, Space, notification, Upload, Pagination } from 'antd';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import listingsData from '../data/listingsData';
 
@@ -11,6 +11,8 @@ const Listings = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentSection, setCurrentSection] = useState(0);
   const [form] = Form.useForm();
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 4;
 
   const showAddListingModal = () => {
     setIsModalVisible(true);
@@ -50,6 +52,12 @@ const Listings = () => {
     setCurrentSection(0);
   };
 
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const paginatedListings = listings.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
@@ -59,7 +67,7 @@ const Listings = () => {
         </Button>
       </div>
       <Row gutter={[16, 16]}>
-        {listings.map((listing) => (
+        {paginatedListings.map((listing) => (
           <Col key={listing.key} xs={24} sm={12} md={8} lg={6}>
             <Card
               hoverable
@@ -89,6 +97,13 @@ const Listings = () => {
           </Col>
         ))}
       </Row>
+      <Pagination
+        current={currentPage}
+        pageSize={pageSize}
+        total={listings.length}
+        onChange={handlePageChange}
+        style={{ marginTop: 20, textAlign: 'center' }}
+      />
 
       <Modal
         title="Add New Listing"
@@ -201,3 +216,4 @@ const Listings = () => {
 };
 
 export default Listings;
+
