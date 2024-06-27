@@ -1,20 +1,20 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import CustomLayout from './components/Layout';
-import Login from './pages/Login';
-import Listings from './pages/Listings';
-import DetailedListing from './pages/ListingDetails';
 import InboxDrawer from './components/InboxDrawer';
+import Listings from './pages/Listings';
+import Login from './pages/Login';
+import ListingDetails from './pages/ListingDetails';
 import './App.css';
 
 const App = () => {
-  const [isDrawerVisible, setIsDrawerVisible] = useState(false);
+  const [isDrawerVisible, setIsDrawerVisible] = React.useState(false);
 
   const showDrawer = () => {
     setIsDrawerVisible(true);
   };
 
-  const onClose = () => {
+  const closeDrawer = () => {
     setIsDrawerVisible(false);
   };
 
@@ -24,12 +24,13 @@ const App = () => {
         <Routes>
           <Route exact path="/" element={<Login />} />
           <Route path="/listings" element={<Listings />} />
-          <Route path="/listings/:slug" element={<DetailedListing />} />
+          <Route path="/listings/:slug" element={<ListingDetails />} />
         </Routes>
-        <InboxDrawer visible={isDrawerVisible} onClose={onClose} />
+        <InboxDrawer visible={isDrawerVisible} onClose={closeDrawer} />
       </CustomLayout>
     </Router>
   );
 };
 
 export default App;
+
