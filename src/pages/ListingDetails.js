@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Card, Table, Button, Carousel, Row, Col, Form, Input, Modal } from 'antd';
-import { EditOutlined, SaveOutlined, UndoOutlined } from '@ant-design/icons';
+import { Card, Table, Button, Carousel, Row, Col, Form, Input, Modal, Upload } from 'antd';
+import { EditOutlined, SaveOutlined, UndoOutlined, PlusOutlined } from '@ant-design/icons';
 import listingsData from '../data/listingsData';
 
 const DetailedListing = () => {
   const { slug } = useParams();
   const [isEditing, setIsEditing] = useState(false);
+  const [isEditingFeatures, setIsEditingFeatures] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [listing, setListing] = useState(() => listingsData.find(l => l.slug === slug));
   const [form] = Form.useForm();
+  const [featuresForm] = Form.useForm();
 
   const handleEditClick = () => {
     setIsEditing(true);
@@ -18,15 +20,7 @@ const DetailedListing = () => {
   const handleSaveClick = () => {
     form.validateFields()
       .then(values => {
-        const updatedListing = {
-          ...listing,
-          ...values,
-          agent: {
-            ...listing.agent,
-            number: values.agentNumber,
-          },
-        };
-        setListing(updatedListing);
+        setListing({ ...listing, ...values });
         setIsEditing(false);
       })
       .catch(info => {
@@ -37,6 +31,31 @@ const DetailedListing = () => {
   const handleCancelClick = () => {
     form.resetFields();
     setIsEditing(false);
+  };
+
+  const handleEditFeaturesClick = () => {
+    setIsEditingFeatures(true);
+  };
+
+  const handleSaveFeaturesClick = () => {
+    featuresForm.validateFields()
+      .then(values => {
+        setListing({
+          ...listing,
+          exteriorFeatures: values.exteriorFeatures || [],
+          interiorFeatures: values.interiorFeatures || [],
+          propertyFeatures: values.propertyFeatures || [],
+        });
+        setIsEditingFeatures(false);
+      })
+      .catch(info => {
+        console.log('Validate Failed:', info);
+      });
+  };
+
+  const handleCancelFeaturesClick = () => {
+    featuresForm.resetFields();
+    setIsEditingFeatures(false);
   };
 
   const showModal = () => {
@@ -72,9 +91,9 @@ const DetailedListing = () => {
   ];
 
   return (
-    <div style={{ padding: '16px' }}>
-      <Row gutter={[16, 16]}>
-        <Col xs={24} md={12}>
+    <>
+      <Row gutter={16}>
+        <Col span={12}>
           <Card title={listing.title}>
             <Carousel autoplay>
               {listing.images.map((image, index) => (
@@ -84,8 +103,8 @@ const DetailedListing = () => {
               ))}
             </Carousel>
             <Card style={{ marginTop: '16px' }}>
-              <Row gutter={[16, 16]}>
-                <Col xs={24} md={12}>
+              <Row gutter={16}>
+                <Col span={12}>
                   <Card title="Property Details">
                     {!isEditing ? (
                       <>
@@ -117,22 +136,27 @@ const DetailedListing = () => {
                     )}
                   </Card>
                 </Col>
-                <Col xs={24} md={12}>
+                <Col span={12}>
                   <Card title="Agent Info">
                     {!isEditing ? (
                       <>
                         <p>{listing.agent.name}</p>
                         <p>{listing.agent.number}</p>
-                        <Button type="primary" onClick={showModal}>
-                          Contact Agent
-                        </Button>
                       </>
                     ) : (
-                      <Form form={form} initialValues={{ agentNumber: listing.agent.number }} layout="vertical">
-                        <Form.Item name="agentNumber" label="Agent Phone Number" rules={[{ required: true }]}>
+                      <Form form={form} initialValues={listing} layout="vertical">
+                        <Form.Item name="agentName" label="Agent Name" rules={[{ required: true }]}>
+                          <Input />
+                        </Form.Item>
+                        <Form.Item name="agentNumber" label="Agent Number" rules={[{ required: true }]}>
                           <Input />
                         </Form.Item>
                       </Form>
+                    )}
+                    {!isEditing && (
+                      <Button type="primary" onClick={showModal}>
+                        Contact Agent
+                      </Button>
                     )}
                   </Card>
                 </Col>
@@ -156,14 +180,155 @@ const DetailedListing = () => {
             </div>
           </Card>
         </Col>
-        <Col xs={24} md={12}>
+        <Col span={12}>
           <Card title="Features">
-            <h3>Exterior Features</h3>
-            <Table columns={columns} dataSource={listing.exteriorFeatures} pagination={false} />
-            <h3>Interior Features</h3>
-            <Table columns={columns} dataSource={listing.interiorFeatures} pagination={false} />
-            <h3>Property Features</h3>
-            <Table columns={columns} dataSource={listing.propertyFeatures} pagination={false} />
+            {!isEditingFeatures ? (
+              <>
+                <h3>Exterior Features</h3>
+                <Table columns={columns} dataSource={listing.exteriorFeatures} pagination={false} />
+                <h3>Interior Features</h3>
+                <Table columns={columns} dataSource={listing.interiorFeatures} pagination={false} />
+                <h3>Property Features</h3>
+                <Table columns={columns} dataSource={listing.propertyFeatures} pagination={false} />
+                <Button type="primary" icon={<EditOutlined />} onClick={handleEditFeaturesClick}>
+                  Edit Features
+                </Button>
+              </>
+            ) : (
+              <Form form={featuresForm} initialValues={listing} layout="vertical">
+                <h3>Exterior Features</h3>
+                <Form.List name="exteriorFeatures">
+                  {(fields, { add, remove }) => (
+                    <>
+                      {fields.map(({ key, name, fieldKey, ...restField }) => (
+                        <Row key={key} gutter={16}>
+                          <Col span={10}>
+                            <Form.Item
+                              {...restField}
+                              name={[name, 'feature']}
+                              fieldKey={[fieldKey, 'feature']}
+                              rules={[{ required: true, message: 'Missing feature' }]}
+                            >
+                              <Input placeholder="Feature" />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10}>
+                            <Form.Item
+                              {...restField}
+                              name={[name, 'description']}
+                              fieldKey={[fieldKey, 'description']}
+                              rules={[{ required: true, message: 'Missing description' }]}
+                            >
+                              <Input placeholder="Description" />
+                            </Form.Item>
+                          </Col>
+                          <Col span={4}>
+                            <Button type="danger" onClick={() => remove(name)}>
+                              Remove
+                            </Button>
+                          </Col>
+                        </Row>
+                      ))}
+                      <Form.Item>
+                        <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                          Add Exterior Feature
+                        </Button>
+                      </Form.Item>
+                    </>
+                  )}
+                </Form.List>
+                <h3>Interior Features</h3>
+                <Form.List name="interiorFeatures">
+                  {(fields, { add, remove }) => (
+                    <>
+                      {fields.map(({ key, name, fieldKey, ...restField }) => (
+                        <Row key={key} gutter={16}>
+                          <Col span={10}>
+                            <Form.Item
+                              {...restField}
+                              name={[name, 'feature']}
+                              fieldKey={[fieldKey, 'feature']}
+                              rules={[{ required: true, message: 'Missing feature' }]}
+                            >
+                              <Input placeholder="Feature" />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10}>
+                            <Form.Item
+                              {...restField}
+                              name={[name, 'description']}
+                              fieldKey={[fieldKey, 'description']}
+                              rules={[{ required: true, message: 'Missing description' }]}
+                            >
+                              <Input placeholder="Description" />
+                            </Form.Item>
+                          </Col>
+                          <Col span={4}>
+                            <Button type="danger" onClick={() => remove(name)}>
+                              Remove
+                            </Button>
+                          </Col>
+                        </Row>
+                      ))}
+                      <Form.Item>
+                        <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                          Add Interior Feature
+                        </Button>
+                      </Form.Item>
+                    </>
+                  )}
+                </Form.List>
+                <h3>Property Features</h3>
+                <Form.List name="propertyFeatures">
+                  {(fields, { add, remove }) => (
+                    <>
+                      {fields.map(({ key, name, fieldKey, ...restField }) => (
+                        <Row key={key} gutter={16}>
+                          <Col span={10}>
+                            <Form.Item
+                              {...restField}
+                              name={[name, 'feature']}
+                              fieldKey={[fieldKey, 'feature']}
+                              rules={[{ required: true, message: 'Missing feature' }]}
+                            >
+                              <Input placeholder="Feature" />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10}>
+                            <Form.Item
+                              {...restField}
+                              name={[name, 'description']}
+                              fieldKey={[fieldKey, 'description']}
+                              rules={[{ required: true, message: 'Missing description' }]}
+                            >
+                              <Input placeholder="Description" />
+                            </Form.Item>
+                          </Col>
+                          <Col span={4}>
+                            <Button type="danger" onClick={() => remove(name)}>
+                              Remove
+                            </Button>
+                          </Col>
+                        </Row>
+                      ))}
+                      <Form.Item>
+                        <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                          Add Property Feature
+                        </Button>
+                      </Form.Item>
+                    </>
+                  )}
+                </Form.List>
+                <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'space-between' }}>
+                  <Button type="primary" icon={<SaveOutlined />} onClick={handleSaveFeaturesClick}>
+                    Save Features
+                  </Button>
+                  <Button icon={<UndoOutlined />} onClick={handleCancelFeaturesClick}>
+                    Undo
+                  </Button>
+                </div>
+              </Form>
+            )}
           </Card>
         </Col>
       </Row>
@@ -184,9 +349,12 @@ const DetailedListing = () => {
           </Form.Item>
         </Form>
       </Modal>
-    </div>
+    </>
   );
 };
 
 export default DetailedListing;
+
+
+
 
