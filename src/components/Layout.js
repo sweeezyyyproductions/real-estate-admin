@@ -1,3 +1,4 @@
+// Layout.js - Version: 0
 import React from 'react';
 import { Layout } from 'antd';
 import Navbar from './Navbar';
@@ -21,4 +22,5 @@ const CustomLayout = ({ children, showDrawer }) => (
 );
 
 export default CustomLayout;
+
 

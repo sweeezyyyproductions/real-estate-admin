@@ -1,3 +1,4 @@
+// Version: 2
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, Row, Col, Button, Form, Input, Slider, Modal, Space, notification, Upload, Pagination } from 'antd';
@@ -60,7 +61,7 @@ const Listings = () => {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
         <h1>Listings</h1>
         <Button type="primary" icon={<PlusOutlined />} onClick={showAddListingModal}>
           Add Listing
@@ -109,20 +110,27 @@ const Listings = () => {
         title="Add New Listing"
         visible={isModalVisible}
         onCancel={handleCancel}
-        footer={null}
+        footer={[
+          <Button key="back" onClick={handlePrevious} disabled={currentSection === 0}>
+            Previous
+          </Button>,
+          <Button key="next" type="primary" onClick={handleNext} disabled={currentSection === 1}>
+            Next
+          </Button>,
+          <Button key="submit" type="primary" onClick={() => form.submit()} style={{ display: currentSection === 1 ? 'inline-block' : 'none' }}>
+            Add Listing
+          </Button>,
+        ]}
       >
         <Form form={form} onFinish={handleAddListing} layout="vertical">
           {currentSection === 0 && (
-            <div>
-              <h2>Property Details</h2>
-              <Form.Item name="title" label="Title" rules={[{ required: true }]}>
-                <Input />
-              </Form.Item>
+            <>
+              <h3>Property Details</h3>
               <Form.Item name="address" label="Address" rules={[{ required: true }]}>
                 <Input />
               </Form.Item>
               <Form.Item name="price" label="Price" rules={[{ required: true }]}>
-                <Slider min={0} max={1000000} step={1000} />
+                <Slider min={0} max={1000000} step={10000} />
               </Form.Item>
               <Form.Item name="beds" label="Beds" rules={[{ required: true }]}>
                 <Input type="number" />
@@ -142,7 +150,7 @@ const Listings = () => {
               <Form.Item name="area" label="Area" rules={[{ required: true }]}>
                 <Input />
               </Form.Item>
-              <Form.Item name="image" label="Upload Image" rules={[{ required: true }]}>
+              <Form.Item name="image" label="Image" rules={[{ required: true }]}>
                 <Upload listType="picture-card" beforeUpload={() => false}>
                   <div>
                     <PlusOutlined />
@@ -150,23 +158,17 @@ const Listings = () => {
                   </div>
                 </Upload>
               </Form.Item>
-              <Space style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Button disabled>Previous</Button>
-                <Button type="primary" onClick={handleNext}>
-                  Next
-                </Button>
-              </Space>
-            </div>
+            </>
           )}
           {currentSection === 1 && (
-            <div>
-              <h2>Features</h2>
-              <Form.List name="features">
+            <>
+              <h3>Features</h3>
+              <Form.List name="exteriorFeatures">
                 {(fields, { add, remove }) => (
                   <>
                     {fields.map(({ key, name, fieldKey, ...restField }) => (
-                      <Row key={key} gutter={[16, 16]}>
-                        <Col span={12}>
+                      <Row key={key} gutter={16}>
+                        <Col span={10}>
                           <Form.Item
                             {...restField}
                             name={[name, 'feature']}
@@ -176,7 +178,7 @@ const Listings = () => {
                             <Input placeholder="Feature" />
                           </Form.Item>
                         </Col>
-                        <Col span={12}>
+                        <Col span={10}>
                           <Form.Item
                             {...restField}
                             name={[name, 'description']}
@@ -186,28 +188,96 @@ const Listings = () => {
                             <Input placeholder="Description" />
                           </Form.Item>
                         </Col>
-                        <Col span={24}>
-                          <Button type="dashed" onClick={() => remove(name)} block icon={<MinusOutlined />}>
-                            Remove
-                          </Button>
+                        <Col span={4}>
+                          <Button type="danger" icon={<MinusOutlined />} onClick={() => remove(name)} />
                         </Col>
                       </Row>
                     ))}
                     <Form.Item>
                       <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                        Add Feature
+                        Add Exterior Feature
                       </Button>
                     </Form.Item>
                   </>
                 )}
               </Form.List>
-              <Space style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Button onClick={handlePrevious}>Previous</Button>
-                <Button type="primary" htmlType="submit">
-                  Add Listing
-                </Button>
-              </Space>
-            </div>
+              <Form.List name="interiorFeatures">
+                {(fields, { add, remove }) => (
+                  <>
+                    {fields.map(({ key, name, fieldKey, ...restField }) => (
+                      <Row key={key} gutter={16}>
+                        <Col span={10}>
+                          <Form.Item
+                            {...restField}
+                            name={[name, 'feature']}
+                            fieldKey={[fieldKey, 'feature']}
+                            rules={[{ required: true, message: 'Missing feature' }]}
+                          >
+                            <Input placeholder="Feature" />
+                          </Form.Item>
+                        </Col>
+                        <Col span={10}>
+                          <Form.Item
+                            {...restField}
+                            name={[name, 'description']}
+                            fieldKey={[fieldKey, 'description']}
+                            rules={[{ required: true, message: 'Missing description' }]}
+                          >
+                            <Input placeholder="Description" />
+                          </Form.Item>
+                        </Col>
+                        <Col span={4}>
+                          <Button type="danger" icon={<MinusOutlined />} onClick={() => remove(name)} />
+                        </Col>
+                      </Row>
+                    ))}
+                    <Form.Item>
+                      <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                        Add Interior Feature
+                      </Button>
+                    </Form.Item>
+                  </>
+                )}
+              </Form.List>
+              <Form.List name="propertyFeatures">
+                {(fields, { add, remove }) => (
+                  <>
+                    {fields.map(({ key, name, fieldKey, ...restField }) => (
+                      <Row key={key} gutter={16}>
+                        <Col span={10}>
+                          <Form.Item
+                            {...restField}
+                            name={[name, 'feature']}
+                            fieldKey={[fieldKey, 'feature']}
+                            rules={[{ required: true, message: 'Missing feature' }]}
+                          >
+                            <Input placeholder="Feature" />
+                          </Form.Item>
+                        </Col>
+                        <Col span={10}>
+                          <Form.Item
+                            {...restField}
+                            name={[name, 'description']}
+                            fieldKey={[fieldKey, 'description']}
+                            rules={[{ required: true, message: 'Missing description' }]}
+                          >
+                            <Input placeholder="Description" />
+                          </Form.Item>
+                        </Col>
+                        <Col span={4}>
+                          <Button type="danger" icon={<MinusOutlined />} onClick={() => remove(name)} />
+                        </Col>
+                      </Row>
+                    ))}
+                    <Form.Item>
+                      <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                        Add Property Feature
+                      </Button>
+                    </Form.Item>
+                  </>
+                )}
+              </Form.List>
+            </>
           )}
         </Form>
       </Modal>
@@ -216,4 +286,5 @@ const Listings = () => {
 };
 
 export default Listings;
+
 

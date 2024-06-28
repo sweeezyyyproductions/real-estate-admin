@@ -1,4 +1,6 @@
 // src/pages/Inbox.js
+// Version: 0
+
 import React, { useState } from 'react';
 import { Button } from 'antd';
 import InboxDrawer from '../components/InboxDrawer';
@@ -26,3 +28,4 @@ const Inbox = () => {
 };
 
 export default Inbox;
+

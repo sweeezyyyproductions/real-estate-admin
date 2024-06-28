@@ -1,3 +1,4 @@
+// Version: 0
 import React, { useState } from 'react';
 import { List, Avatar, Button, Skeleton, Card, Modal, Input } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
@@ -217,3 +218,4 @@ const InboxMessages = ({ type }) => {
 };
 
 export default InboxMessages;
+

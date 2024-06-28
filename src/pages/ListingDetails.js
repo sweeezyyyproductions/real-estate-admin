@@ -1,6 +1,7 @@
+// Version: 3
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Card, Table, Button, Carousel, Row, Col, Form, Input, Modal, Upload } from 'antd';
+import { Card, Table, Button, Carousel, Row, Col, Form, Input, Modal } from 'antd';
 import { EditOutlined, SaveOutlined, UndoOutlined, PlusOutlined } from '@ant-design/icons';
 import listingsData from '../data/listingsData';
 
@@ -8,7 +9,6 @@ const DetailedListing = () => {
   const { slug } = useParams();
   const [isEditing, setIsEditing] = useState(false);
   const [isEditingFeatures, setIsEditingFeatures] = useState(false);
-  const [isModalVisible, setIsModalVisible] = useState(false);
   const [listing, setListing] = useState(() => listingsData.find(l => l.slug === slug));
   const [form] = Form.useForm();
   const [featuresForm] = Form.useForm();
@@ -58,25 +58,6 @@ const DetailedListing = () => {
     setIsEditingFeatures(false);
   };
 
-  const showModal = () => {
-    setIsModalVisible(true);
-  };
-
-  const handleCancel = () => {
-    setIsModalVisible(false);
-  };
-
-  const handleAddListing = (values) => {
-    const newListing = {
-      key: listingsData.length + 1,
-      ...values,
-      image: URL.createObjectURL(values.image.file.originFileObj),
-    };
-    listingsData.push(newListing);
-    setIsModalVisible(false);
-    form.resetFields();
-  };
-
   const columns = [
     {
       title: 'Feature',
@@ -93,7 +74,7 @@ const DetailedListing = () => {
   return (
     <>
       <Row gutter={16}>
-        <Col span={12}>
+        <Col span={24}>
           <Card title={listing.title}>
             <Carousel autoplay>
               {listing.images.map((image, index) => (
@@ -153,11 +134,6 @@ const DetailedListing = () => {
                         </Form.Item>
                       </Form>
                     )}
-                    {!isEditing && (
-                      <Button type="primary" onClick={showModal}>
-                        Contact Agent
-                      </Button>
-                    )}
                   </Card>
                 </Col>
               </Row>
@@ -180,7 +156,7 @@ const DetailedListing = () => {
             </div>
           </Card>
         </Col>
-        <Col span={12}>
+        <Col span={24}>
           <Card title="Features">
             {!isEditingFeatures ? (
               <>
@@ -332,29 +308,9 @@ const DetailedListing = () => {
           </Card>
         </Col>
       </Row>
-      <Modal
-        title="Contact Agent"
-        visible={isModalVisible}
-        onCancel={handleCancel}
-        footer={null}
-      >
-        <Form form={form} onFinish={handleAddListing} layout="vertical">
-          <Form.Item name="message" label="Message" rules={[{ required: true }]}>
-            <Input.TextArea />
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              Send Message
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
     </>
   );
 };
 
 export default DetailedListing;
-
-
-
-
+ 

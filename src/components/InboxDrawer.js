@@ -1,3 +1,5 @@
+// Version: 0
+
 // src/components/InboxDrawer.js
 import React, { useState } from 'react';
 import { Drawer, Tabs, Badge } from 'antd';
@@ -46,3 +48,4 @@ const InboxDrawer = ({ visible, onClose }) => {
 };
 
 export default InboxDrawer;
+
