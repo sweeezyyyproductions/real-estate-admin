@@ -1,8 +1,10 @@
+// Version: 2
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Card, Table, Button, Carousel, Row, Col, Form, Input, Modal } from 'antd';
 import { EditOutlined, SaveOutlined, UndoOutlined } from '@ant-design/icons';
 import listingsData from '../data/listingsData';
+import ListingBanner from '../components/listing-banner';
 
 const DetailedListing = () => {
   const { slug } = useParams();
@@ -73,6 +75,7 @@ const DetailedListing = () => {
 
   return (
     <div style={{ padding: '16px' }}>
+      <ListingBanner />
       <Row gutter={[16, 16]}>
         <Col xs={24} md={12}>
           <Card title={listing.title}>
@@ -189,4 +192,3 @@ const DetailedListing = () => {
 };
 
 export default DetailedListing;
-

@@ -61,4 +61,7 @@
     gap: 10px;
     margin-top: 10px;
   }
-  
+  .custom-ribbon .ant-ribbon-text {
+    color: black;
+    font-weight: bold;
+  }

@@ -1,0 +1,27 @@
+/* Version: 1 */
+.banner {
+    margin: 20px 0;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #e8e8e8;
+    border-radius: 4px;
+  }
+  
+  .bannerContent {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .item {
+    margin-right: 20px;
+  }
+  
+  .item span {
+    font-weight: normal;
+  }
+  
+  .item strong {
+    font-weight: bold;
+  }
+  

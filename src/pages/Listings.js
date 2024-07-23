@@ -1,8 +1,10 @@
+// Version: 2
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Card, Row, Col, Button, Form, Input, Slider, Modal, Space, notification, Upload } from 'antd';
+import { Card, Row, Col, Button, Form, Input, Slider, Modal, Space, notification, Upload, Badge } from 'antd';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import listingsData from '../data/listingsData';
+import '../styles/Listings.css';  // Import the CSS file
 
 const { Meta } = Card;
 
@@ -43,6 +45,7 @@ const Listings = () => {
       ...values,
       slug: `listing-${listings.length + 1}`,
       image: values.image ? URL.createObjectURL(values.image.file.originFileObj) : '/images/default.jpg', // Placeholder image
+      onSite: 1 // New property indicating the number of days on site
     };
     setListings([...listings, newListing]);
     setIsModalVisible(false);
@@ -61,31 +64,33 @@ const Listings = () => {
       <Row gutter={[16, 16]}>
         {listings.map((listing) => (
           <Col key={listing.key} xs={24} sm={12} md={8} lg={6}>
-            <Card
-              hoverable
-              cover={<img alt="example" src={listing.image} />}
-            >
-              <Meta title={listing.title} description={listing.address} />
-              <p>{listing.price}</p>
-              <Row>
-                <Col span={12}>
-                  <p>Beds: {listing.beds}</p>
-                </Col>
-                <Col span={12}>
-                  <p>Baths: {listing.baths}</p>
-                </Col>
-              </Row>
-              <Row>
-                <Col span={12}>
-                  <p>Sq Ft: {listing.sqft}</p>
-                </Col>
-                <Col span={12}>
-                  <Link to={`/listings/${listing.slug}`}>
-                    <Button type="link">View Details</Button>
-                  </Link>
-                </Col>
-              </Row>
-            </Card>
+            <Badge.Ribbon text="Only 1 Day Old!!" color="yellow" className="custom-ribbon">
+              <Card
+                hoverable
+                cover={<img alt="example" src={listing.image} />}
+              >
+                <Meta title={listing.title} description={listing.address} />
+                <p>{listing.price}</p>
+                <Row>
+                  <Col span={12}>
+                    <p>Beds: {listing.beds}</p>
+                  </Col>
+                  <Col span={12}>
+                    <p>Baths: {listing.baths}</p>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={12}>
+                    <p>Sq Ft: {listing.sqft}</p>
+                  </Col>
+                  <Col span={12}>
+                    <Link to={`/listings/${listing.slug}`}>
+                      <Button type="link">View Details</Button>
+                    </Link>
+                  </Col>
+                </Row>
+              </Card>
+            </Badge.Ribbon>
           </Col>
         ))}
       </Row>
