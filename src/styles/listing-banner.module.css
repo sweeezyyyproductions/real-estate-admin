@@ -1,4 +1,4 @@
-/* Version: 1 */
+/* Version: 3 */
 .banner {
     margin: 20px 0;
     padding: 10px;
@@ -9,12 +9,15 @@
   
   .bannerContent {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
   }
   
   .item {
     margin-right: 20px;
+    flex: 1 1 45%; /* Adjusts items to take up 45% of the width and wrap on smaller screens */
+    margin-bottom: 10px; /* Add margin to the bottom for spacing when wrapped */
   }
   
   .item span {
@@ -23,5 +26,23 @@
   
   .item strong {
     font-weight: bold;
+  }
+  
+  @media (min-width: 768px) {
+    .bannerContent {
+      flex-wrap: nowrap; /* No wrapping on larger screens */
+      justify-content: space-around; /* Space items evenly */
+    }
+  
+    .item {
+      flex: 1; /* Items take equal width on larger screens */
+      text-align: left; /* Align text to left */
+      margin-right: 0; /* Remove right margin on larger screens */
+      margin-bottom: 0; /* Remove bottom margin on larger screens */
+    }
+  
+    .item:last-child {
+      margin-right: 0; /* Ensure no margin on the last item */
+    }
   }
   

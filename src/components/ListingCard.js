@@ -1,8 +1,10 @@
-// Version: 1
+// Version: 2
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Card, Col, Row, Button, Badge } from 'antd';
+import { Card, Col, Row, Button, Badge, Avatar } from 'antd';
 import { Meta } from 'antd/lib/list/Item';
+import { EyeOutlined } from '@ant-design/icons';
+import styles from '../styles/listing-banner.module.css'; // Assuming this CSS file contains necessary styles
 
 const ListingCard = ({ listing }) => (
   <Col xs={24} sm={12} md={8} lg={6}>
@@ -28,6 +30,10 @@ const ListingCard = ({ listing }) => (
             </Link>
           </Col>
         </Row>
+        <div className={styles.item} style={{ marginTop: '10px' }}>
+          <Avatar icon={<EyeOutlined />} />
+          <strong>{listing.views}</strong>
+        </div>
       </Card>
     </Badge.Ribbon>
   </Col>

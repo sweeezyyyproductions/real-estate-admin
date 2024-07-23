@@ -1,6 +1,7 @@
-// Version: 1
+// Version: 3
 import React from 'react';
-import { Card, Badge } from 'antd';
+import { Card, Badge, Avatar } from 'antd';
+import { EyeOutlined } from '@ant-design/icons';
 import styles from '../styles/listing-banner.module.css';
 
 const ListingBanner = () => {
@@ -22,6 +23,11 @@ const ListingBanner = () => {
         <div className={styles.item}>
           <span>Updated: </span>
           <strong>5 minutes ago</strong>
+        </div>
+        <div className={styles.item}>
+          <span>Views: </span>
+          <Avatar icon={<EyeOutlined />} />
+          <strong>150</strong>
         </div>
       </div>
     </Card>
